@@ -602,7 +602,7 @@ TEST_F(SequentialTest, ModuleForwardMethodOptionalArg) {
     torch::manual_seed(0);
     Sequential sequential(Identity(), RNN(2, 3));
     auto x = torch::ones({2, 3, 2});
-    auto rnn_output = sequential->forward<RNNOutput>(x);
+    auto rnn_output = sequential->forward<std::tuple<torch::Tensor, torch::Tensor>>(x);
     auto expected_output = torch::tensor(
     {{{0.0000, 0.0000,  0.4886},
       {0.0000, 0.0000,  0.4886},
@@ -610,13 +610,13 @@ TEST_F(SequentialTest, ModuleForwardMethodOptionalArg) {
      {{0.0000, 0.0000,  0.3723},
       {0.0000, 0.0000,  0.3723},
       {0.0000, 0.0000,  0.3723}}});
-    ASSERT_TRUE(torch::allclose(rnn_output.output, expected_output, 1e-05, 2e-04));
+    ASSERT_TRUE(torch::allclose(std::get<0>(rnn_output), expected_output, 1e-05, 2e-04));
   }
   {
     torch::manual_seed(0);
     Sequential sequential(Identity(), LSTM(2, 3));
     auto x = torch::ones({2, 3, 2});
-    auto rnn_output = sequential->forward<RNNOutput>(x);
+    auto rnn_output = sequential->forward<std::tuple<torch::Tensor, std::tuple<torch::Tensor, torch::Tensor>>>(x);
     auto expected_output = torch::tensor(
     {{{-0.2693, -0.1240,  0.0744},
       {-0.2693, -0.1240,  0.0744},
@@ -624,13 +624,13 @@ TEST_F(SequentialTest, ModuleForwardMethodOptionalArg) {
      {{-0.3889, -0.1919,  0.1183},
       {-0.3889, -0.1919,  0.1183},
       {-0.3889, -0.1919,  0.1183}}});
-    ASSERT_TRUE(torch::allclose(rnn_output.output, expected_output, 1e-05, 2e-04));
+    ASSERT_TRUE(torch::allclose(std::get<0>(rnn_output), expected_output, 1e-05, 2e-04));
   }
   {
     torch::manual_seed(0);
     Sequential sequential(Identity(), GRU(2, 3));
     auto x = torch::ones({2, 3, 2});
-    auto rnn_output = sequential->forward<RNNOutput>(x);
+    auto rnn_output = sequential->forward<std::tuple<torch::Tensor, torch::Tensor>>(x);
     auto expected_output = torch::tensor(
     {{{-0.1134,  0.0467,  0.2336},
       {-0.1134,  0.0467,  0.2336},
@@ -638,6 +638,6 @@ TEST_F(SequentialTest, ModuleForwardMethodOptionalArg) {
      {{-0.1189,  0.0502,  0.2960},
       {-0.1189,  0.0502,  0.2960},
       {-0.1189,  0.0502,  0.2960}}});
-    ASSERT_TRUE(torch::allclose(rnn_output.output, expected_output, 1e-05, 2e-04));
+    ASSERT_TRUE(torch::allclose(std::get<0>(rnn_output), expected_output, 1e-05, 2e-04));
   }
 }
